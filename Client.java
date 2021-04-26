@@ -21,37 +21,42 @@ public class Client extends UnicastRemoteObject implements BoardInterface , Runn
 
     // Displays board to the client
     // turn descibes who will have the next turn
+    // flag = 0 for ordinary turn
     // flag = 1 if an illegal number is entered 
     // flag = 2 if Player 1 wins
     // flag = 3 if Player 2 wins
     public void displayBoard(int[][] board, int turn, int flag) throws RemoteException {
+        // checks for error
         if(flag==1){
             System.out.println("Please Enter A Valid Column Number");
         }
+        this.PlayerTurn = turn;
         if(flag==0 || flag==1){
-            this.PlayerTurn = turn;
             if(PlayerTurn == PlayerNum){
                 System.out.println("Your Turn");
             }
             else{
                 System.out.println("Opponent's Turn");
             }
-            System.out.println("\nBoard\n");
-            for(int i=1;i<=7;i++)
+        }
+        // prints board
+        System.out.println("\nBoard\n");
+        for(int i=1;i<=7;i++)
+        {
+            System.out.print(i+" ");
+        }
+        System.out.println();
+        System.out.println();
+        for(int i=0;i<6;i++)
+        {
+            for(int j=0; j<7;j++)
             {
-                System.out.print(i+" ");
+                System.out.print(board[i][j]+" ");
             }
             System.out.println();
-            System.out.println();
-            for(int i=0;i<6;i++)
-            {
-                for(int j=0; j<7;j++)
-                {
-                    System.out.print(board[i][j]+" ");
-                }
-                System.out.println();
-            }
-            System.out.println();
+        }
+        System.out.println();
+        if(flag==0 || flag==1){
             if(PlayerTurn == PlayerNum){
                 if(flag==0){
                     System.out.println("Press ENTER To Keep Playing");
@@ -59,6 +64,7 @@ public class Client extends UnicastRemoteObject implements BoardInterface , Runn
                 System.out.println();
             }
         }
+        // displays winner
         if(flag == 2 || flag == 3){
             System.out.println("Player "+(flag-1)+" Wins!!!!!");
             chkExit = false;

@@ -13,6 +13,7 @@ public class Server extends UnicastRemoteObject implements BoardInterface {
         board = new int[6][7];
     }
 
+    // checks for  number of connected clients and adds client if possible 
     public synchronized int addClient(BoardInterface boardinterface) throws RemoteException {
         if(clientList.size() < 2){
             this.clientList.add(boardinterface);
@@ -63,7 +64,7 @@ public class Server extends UnicastRemoteObject implements BoardInterface {
                 }
             }
         }
-        // Check positively sloped diaganols
+        // Check positively sloped diagonals
         for(c=0;c<7-3;c++){
             for(r=0;r<6-3;r++){
                 if(board[r][c] == 1 && board[r+1][c+1] == 1 && board[r+2][c+2] == 1 && board[r+3][c+3] == 1){
@@ -74,7 +75,7 @@ public class Server extends UnicastRemoteObject implements BoardInterface {
                 }
             }
         }
-        // Check negatively sloped diaganols
+        // Check negatively sloped diagonals
         for(c=0;c<7-3;c++){
             for(r=3;r<6;r++){
                 if(board[r][c] == 1 && board[r-1][c+1] == 1 && board[r-2][c+2] == 1 && board[r-3][c+3] == 1){
@@ -89,21 +90,25 @@ public class Server extends UnicastRemoteObject implements BoardInterface {
         
     }
  
+    // Plays turn and call checkWin to check for win
     public synchronized void playTurn(int player,int column) throws RemoteException {
         int flag = 0;
         int added = 0;
+        // Checking for valid column 
         if(!(column>0 && column<8)){
             flag = 1;
             clientList.get(player-1).displayBoard(board, player, flag);
         }
         if(flag == 0){
             added = addToken(player, column);
+            // Checking for trying to add to full column
             if(added == 0){
                 flag = 1;
                 clientList.get(player-1).displayBoard(board, player, flag);
             }
             else{
                 flag = checkWin();
+                // calling clients DisplayBoard
                 if(player == 1){
                     for(int i=0; i<clientList.size(); i++) {
                         clientList.get(i).displayBoard(board, 2, flag);
